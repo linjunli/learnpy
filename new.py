@@ -127,3 +127,47 @@ for n in primes():
         print(n)
     else:
         break
+
+# sorted()函数是用来排序的函数
+sor = sorted([36, 5, -12, 9, -21])
+print(sor)
+sorByAbs = sorted([36, 5, -12, 9, -21], key=my_abs)
+print(sorByAbs)
+# 反向排序，第三个参数reverse=True
+sorByAbsRe = sorted([36, 5, -12, 9, -21], key=my_abs, reverse=True)
+print(sorByAbsRe)
+sortByLower = sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower)
+print(sortByLower)
+L = [('Bob', 75), ('Adam', 92), ('Bart', 66), ('Lisa', 88)]
+def by_name(t):
+    return t[0]
+def by_score(t):
+    return t[1]
+L2 = sorted(L, key=by_name)
+print(L2)
+L3 = sorted(L, key=by_score)
+print(L3)
+
+# 函数闭包
+def count():
+    fs = []
+    for i in range(1, 4):
+        def f():
+            return i * i
+        fs.append(f)
+    return fs
+f1, f2, f3 = count()
+print(f1(), f2(), f3()) # 得到9 9 9
+# 再创建一个函数，用该函数的参数绑定循环变量当前的值，
+# 无论该循环变量后续如何更改，已绑定到函数参数的值不变：
+def count():
+    def f(j):
+        def g():
+            return j * j
+        return g
+    fs = []
+    for i in range(1, 4):
+        fs.append(f(i))
+    return fs
+f1, f2, f3 = count()
+print(f1(), f2(), f3()) # 得到1 4 9
