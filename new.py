@@ -74,6 +74,31 @@ def f(x):
 r = map(f, list(range(10)))
 print(list(r))
 
+# 斐波那契数列
+# 1，1，2，3，5，8，13
+def fibo(max):
+    n, a, b = 0, 1, 1
+    while n < max:
+        print(b)
+        # 将print(b)改为 yield b fibo()将变成generator
+        t = (a, a + b)
+        b = t[0]
+        a = t[1]
+        #等价 a, b = b, a + b
+        n = n + 1
+    return 'done'
+fibo(10)
+
+# 杨辉三角 generator
+# 每次next输出下一行
+# [1]
+# [1,1]
+# [1,2,1]
+# [1,3,3,1]
+def Yh(n):
+    while expression:
+        pass
+
 # reduce()把一个函数作用在一个序列[x1,x2,x3]上
 # 这个函数必须接收两个参数，
 # reduce把结果继续和序列的下一个元素做累计计算
