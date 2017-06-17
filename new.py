@@ -440,3 +440,30 @@ class Fib(object):
 
 for n in Fib():
     print(n)
+
+# __getattr__
+# 当我们调用类的方法或属性时，如果不存在，就会报错
+class Student(object):
+    def __init__(self, name):
+        self.name = name
+    def __getattr__(self, attr):
+        if attr == 'score':
+            return 100
+        raise AttributeError('Student object has no a atttibute %s'% attr)
+
+li = Student('lilili')
+print(li.name)
+print(li.score)
+# print(li.age) # error
+# 生成链式调用 REST api
+class Chain(object):
+    def __init__(self, path=''):
+        self._path = path
+    def __getattr__(self, path):
+        return Chain('%s/%s'% (self._path,path))
+    def __str__(self):
+        return self._path
+print(Chain().status.user.timeline.list)
+# callable(arg)判断一个对象是否可以调用(是否有__call__()函数)
+print(callable(Student('li')))
+print(callable(max))
