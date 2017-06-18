@@ -743,3 +743,19 @@ print(balance)
 # 多核 CPU
 # python的多线程实际上不能有效利用多核
 # 可以通过多进程来有效利用多核CPUS
+
+# ThreadLocal
+# 一个ThreadLocal变量虽然是全局变量，但是每个线程都只能读写自己线程的独立副本
+# ThreadLocal解决了参数在一个线程中各个函数之间互相传递的问题
+local_school = threading.local()
+
+# 计算密集型用c语言 vs. IO密集型用脚本语言
+
+# 异步IO
+# 对应到Python语言，单线程的异步编程模型称为协程，
+# 有了协程的支持，就可以基于事件驱动编写高效的多任务程序
+
+# 分布式进程
+# multiprocessing模块
+# managers子模块还支持把多进程分布到多台机器上
+
