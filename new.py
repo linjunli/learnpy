@@ -467,3 +467,279 @@ print(Chain().status.user.timeline.list)
 # callable(arg)判断一个对象是否可以调用(是否有__call__()函数)
 print(callable(Student('li')))
 print(callable(max))
+
+# 枚举
+from enum import Enum
+Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'))
+for name, member in Month.__members__.items():
+    print(name, '=>', ',', member.value)
+print(Month.Jan)
+print(Month.Jan.value)
+
+# 使用元类
+# type()
+# metaclass
+# 元类可以用来编写数据库ORM
+
+# 异常处理
+# 所有异常都继承子BaseException
+try:
+    print('try...')
+    r = 10 / 0
+    print('result:', r)
+except ValueError as e:
+    print('ValueError:', e)
+except ZeroDivisionError as e:
+    print('except:', e)
+else:
+    print('no error')
+finally:
+    print('finally...')
+print('end')
+
+# 记录错误logging模块
+# 错误同样是class, 可以自定义错误类，并抛出自定义的错误
+import logging
+logging.basicConfig(level=logging.INFO)
+def foo(s):
+    return 10 / int(s)
+def bar(s):
+    return foo(s) * 2
+def main():
+    try:
+        bar('0')
+    except Exception as e:
+        logging.exception(e)
+
+main()
+print('END')
+
+# 断言assert
+# 启动python解释器是可以用-0参数关闭所有断言
+# python -0 new.py
+def foo(s):
+    n = int(s)
+    assert n != 0, 'n is zero!'
+    return 10 / n
+def main():
+    foo('0')
+# print(main())
+
+# 启动python的调试器pdb
+# 可以让程序单步执行
+# python -m pdb new.py
+
+
+# 单元测试
+
+# IO编程
+# 异步IO、同步IO
+
+# 文件读写
+# try...finally写法
+# f.read(size)可反复调用一次读取指定大小，避免一次读取占用内存过大
+# f.readline()可每次读取一行，返回list，多用于读取配置文件
+try:
+    f = open('test.txt', 'r', encoding='utf8', errors='ignore')
+    print(f.read())
+finally:
+    if f:
+        f.close()
+# with写法
+# 自动调用f.close()
+with open('test.txt', 'r', encoding='utf8', errors='ignore') as f:
+    print(f.read())
+with open('test.txt', 'r', encoding='utf8', errors='ignore') as f:
+    for line in f.readlines():
+        print(line.strip()) # 把末尾的'\n'删掉
+
+# 读取二进制文件使用rb模式
+# with open('pic.png', 'rb') as f:
+#    print(f.read())
+
+# 写入
+with open('text.txt', 'w') as f:
+    f.write('hello world')
+
+# StringIO在内存中读写str
+from io import StringIO
+f = StringIO()
+f.write('hello')
+print(f.getvalue())
+ff = StringIO('Hello!\nHi!\nGoodbye!')
+while True:
+    s = ff.readline()
+    if s == '':
+        break
+    print(s.strip())
+# BytesIO在内存中读写二进制数据
+from io import BytesIO
+byte = BytesIO(b'\xe4\xb8\xad\xe6\x96\x87')
+print(f.read())
+byt = BytesIO()
+byt.write('李林军'.encode('utf-8'))
+print(byt.getbuffer())
+print(byt.getvalue())
+
+# 操作文件和目录
+import os
+print(os.name)
+print(os.environ.get('PATH'))
+print(os.path.split('/home/web/www.xiaoying.com/lilinjun.txt'))
+print([x for x in os.listdir('.') if os.path.isfile(x)])
+
+# 序列化pickle模块
+# 我们把变量从内存中变成可存储或传输的过程称之为序列化
+# 在Python中叫pickling
+# 在其他语言中也被称之为serialization，marshalling，flattening等等
+import pickle
+d = dict(name='lilinjun', age=20, score=100)
+f = open('text.txt', 'wb')
+pickle.dump(d, f)
+f.close()
+f = open('text.txt', 'rb')
+dd = pickle.load(f)
+f.close()
+print(dd)
+
+# JSON
+# JSON类型    python类型
+#   {}          dict
+#   []          list
+#   "string"    str
+#   123.32      int/float
+#   true/false  True/False
+#   null        None
+import json
+d = dict(name='lilinjun', age=20, score=100)
+print(json.dumps(d))
+json_str = '{"score": 100, "age": 20, "name": "lilinjun"}'
+print(json.loads(json_str))
+print(json.dumps(s, default=lambda obj: obj.__dict__))
+
+# 进程和线程
+# 对于操作系统来说，一个任务就是一个进程(process)
+# 在一个进程内部，要同时用多个子任务干多件事情，
+# 我们把进程内部的这些子任务成为线程,一个进程至少有一个线程
+# linux/os x/unix提供了fork()系统函数调用
+print('Process (%s) start..'% os.getpid())
+# id = os.fork()
+
+from multiprocessing import Process
+def run_proc(name):
+    print('Run child process %s (%s)..'% (name, os.getpid()))
+if __name__ == '__main__':
+    print('Parent process %s.'% os.getpid())
+    p = Process(target=run_proc, args=('test',))
+    print('Child process will start.')
+    p.start()
+    p.join() # join()方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。
+    print('Child process end.')
+
+# Pool
+# 如果要启动大量的子进程，可以用进程池的方式批量创建子进程：
+from multiprocessing import Pool
+import os, time, random
+def long_time_task(name):
+    print('Run task %s (%s)..'% (name, os.getpid()))
+    start = time.time()
+    time.sleep(random.random() * 3)
+    end = time.time()
+    print('Task %s runs %0.2f seconds.'% (name, (end - start)))
+
+if __name__ == '__main__':
+    print('Parent process %s.'% os.getpid())
+    p = Pool(4)
+    for i in range(5):
+        p.apply_async(long_time_task, args=(i,))
+    print('Waiting for all subprocesses done..')
+    p.close()
+    p.join()
+    print('All subprocesses done')
+# 子进程
+import subprocess
+print('$ nslookup www.jd.com')
+r = subprocess.call(['nslookup', 'www.jd.com'])
+print('Exit code:', r)
+
+# 进程间通信
+from multiprocessing import Process, Queue
+import os, time, random
+# 写数据进程执行的代码
+def write(q):
+    print('Process to write: %s'% os.getpid())
+    for value in ['A', 'B', 'C']:
+        print('Put %s to queue...'% value)
+        q.put(value)
+        time.sleep(random.random())
+# 读数据进程执行的代码
+def read(q):
+    print('Process to read: %s'% os.getpid())
+    while True:
+        value = q.get(True)
+        print('Get %s from queue.'% value)
+if __name__ == '__main__':
+    # 父进程创建queue，并传给各个子进程：
+    q = Queue()
+    pw = Process(target=write, args=(q,))
+    pr = Process(target=read, args=(q,))
+    # 启动子进程pw，写入
+    pw.start()
+    # 启动子进程pr,读取
+    pr.start()
+    # 等待pw结束:
+    pw.join()
+    # pr进程里是死循环，无法等待其结束，只能强制中值
+    pr.terminate()
+
+
+# 多线程
+import time, threading
+# 新线程执行的代码
+def loop():
+    print('thread %s is running...'% threading.current_thread().name)
+    n = 0
+    while n < 5:
+        n = n +1
+        print('thread %s >>> %s'% (threading.current_thread().name, n))
+        time.sleep(1)
+    print('thread %s ended.'% threading.current_thread().name)
+
+print('thread %s is running...'% threading.current_thread().name)
+t = threading.Thread(target=loop, name='LoopThread')
+t.start()
+t.join()
+print('thread %s ended.'% threading.current_thread().name)
+
+# Lock
+balance = 0
+lock = threading.Lock()
+
+def change_it(n):
+    # 先存后取，结果应该为0:
+    global balance
+    balance = balance + n
+    balance = balance - n
+
+def run_thread(n):
+    for i in range(100000):
+        # 先要获得锁
+        lock.acquire()
+        try:
+            # 放心地改
+            change_it(n)
+        finally:
+            # 改完了一定要释放锁
+            lock.release()
+
+t1 = threading.Thread(target=run_thread, args=(5,))
+t2 = threading.Thread(target=run_thread, args=(8,))
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+print(balance)
+
+# 多核 CPU
+# python的多线程实际上不能有效利用多核
+# 可以通过多进程来有效利用多核CPUS
