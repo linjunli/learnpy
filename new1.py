@@ -213,3 +213,107 @@ class Application(Frame):
 import socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(('www.sina.com.cn', 80))
+#发送数据
+s.send(b'GET / HTTP/1.1\r\nHost: www.sina.com.cn\r\nConnection: close\r\n\r\n')
+buffer = []
+while True:
+    # 每次最多接收1k字节
+    d = s.recv(1024)
+    if d:
+        buffer.append(d)
+    else:
+        s.close()
+        break
+data = b''.join(buffer)
+header, html = data.split(b'\r\n\r\n', 1)
+print(header.decode('utf-8'))
+# 把接收的数据写入文件：
+with open('sina.html', 'wb') as f:
+    f.write(html)
+
+# 服务器端
+# def tcplink(sock, addr):
+#     print('Accept new connection from %s:%s...' % addr)
+#     sock.send(b'Welcome!')
+#     while True:
+#         data = sock.recv(1024)
+#         time.sleep(1)
+#         if not data or data.decode('utf-8') == 'exit':
+#             break
+#         sock.send(('Hello, %s!' % data.decode('utf-8')).encode('utf-8'))
+#     sock.close()
+#     print('Connection from %s:%s closed.' % addr)
+# import threading,time
+# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# s.bind(('127.0.0.1',9999))
+# s.listen(5)
+# print('Waiting for connection...')
+# while True:
+#     sock, addr = s.accept()
+#     t = threading.Thread(target=tcplink, args=(sock, addr))
+#     t.start()
+
+print('<==============邮件===============>')
+# SMTP发送邮件
+# from email.mime.text import MIMEText
+# from email.header import Header
+# from email.utils import parseaddr, formataddr
+# smpt = 'smtp.163.com'
+# fromAddr = 'lilinjunwp@163.com'
+# toAddr = '894266047@qq.com'
+# pwd = 'lilinjun111'
+# def _format_addr(s):
+#     name,addr = parseaddr(s)
+#     return formataddr((Header(name, 'utf-8').encode(), addr))
+# msg = MIMEText('Hello,send by python..', 'plain', 'utf-8')
+# msg['From'] = _format_addr('Python Test <%s>' % fromAddr)
+# msg['To'] = _format_addr('To <%s>' % toAddr)
+# msg['Subject'] = Header('hello pyhton mail','utf-8').encode()
+# import smtplib
+# server = smtplib.SMTP_SSL(smpt, 465)
+# server.set_debuglevel(1)
+# server.login(fromAddr, pwd)
+# server.sendmail(fromAddr, toAddr, msg.as_string())
+# server.quit()
+
+print('<==============访问数据库===============>')
+# 访问数据库
+# sqlite
+# import sqlite3
+# conn = sqlite3.connect('test.db')
+# cursor = conn.cursor()
+# cursor.execute('create table user (id varchar(20) primary key, name varchar(20))')
+# cursor.execute('insert into user (id, name) values (\'1\', \'Michael\')')
+# print(cursor.rowcount)
+# # 关闭cursor
+# cursor.close()
+# # 提交事务
+# conn.commit()
+# # 关闭链接
+# conn.close()
+print('<==============mysql===============>')
+# mysql
+import pymysql
+connect = pymysql.Connect(
+    user = 'root',
+    passwd = 'root',
+    db = 'test',
+    charset = 'utf8'
+)
+cursor = connect.cursor()
+
+cursor.execute('create table person (id varchar(20) primary key, name varchar(20))')
+cursor.execute('insert into person (id, name) values (%s, %s)', ['1', 'Michael'])
+print(cursor.rowcount)
+connect.commit()
+cursor.close()
+
+cursor = connect.cursor()
+cursor.execute('select * from person where id = %s', ('1',))
+values = cursor.fetchall()
+print(values)
+
+cursor.close()
+connect.close()
+
+print('<==============Web开发===============>')
