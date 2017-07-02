@@ -30,7 +30,7 @@ def home():
 def signin_form():
     return render_template('form.html')
 
-@app.route('/signin', methods=['POST'])
+@app.route('/signin',methods=['POST'])
 def signin():
     # 需要从request对象读取表单内容
     username = request.form['username']
