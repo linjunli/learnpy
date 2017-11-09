@@ -29,7 +29,7 @@ def move(n, a='A', b='B', c='C'):
 #     raise TypeError('input type only int or float')
 # move(int(N))
 move(5)
-print("need",len(step),step)
+print("need", len(step), step)
 
 # python切片功能slice
 L = ['A', 'B', 'C', 'D', 'E']
